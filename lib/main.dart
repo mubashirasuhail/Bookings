@@ -1,6 +1,13 @@
+import 'package:bookings_app/all_order.dart';
+import 'package:bookings_app/header.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -106,7 +113,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            Header(),
             _buildSearchBar(),
             _buildTabSection(),
             Expanded(child: _buildOrderList()),
@@ -116,55 +123,6 @@ class _OrderListScreenState extends State<OrderListScreen> {
       bottomNavigationBar: _buildBottomNavBar(),
       floatingActionButton: _buildFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'My Order List',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1A2E),
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '7 orders in total',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 228, 227, 227),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.filter_alt_outlined,
-              color: Color(0xFF7C3AED),
-              size: 20,
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -239,14 +197,26 @@ class _OrderListScreenState extends State<OrderListScreen> {
             ),
             child: Row(
               children: [
-                Text(
-                  'View all',
-                  style: TextStyle(
-                    color: const Color(0xFF7C3AED),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
+            InkWell(
+  borderRadius: BorderRadius.circular(4), // Keeps the ripple effect clean and contained
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AllOrdersPage()), // Replace with your target page
+    );
+  },
+  child: const Padding(
+    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), // Makes the clickable hit-target slightly larger
+    child: Text(
+      'View all',
+      style: TextStyle(
+        color: Color(0xFF7C3AED),
+        fontWeight: FontWeight.w600,
+        fontSize: 13,
+      ),
+    ),
+  ),
+),
                 const SizedBox(width: 2),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
@@ -509,26 +479,30 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   Widget _buildBottomNavBar() {
+    return Bottombar();
+  }
+
+  BottomAppBar Bottombar() {
     return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 0,
-      elevation: 12,
-      shadowColor: Colors.black26,
-      color: const Color(0xFF7C3AED),
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(Icons.home_outlined, 'Home', 0),
-            _buildNavItem(Icons.celebration, 'Parties', 1),
-            const SizedBox(width: 52), // Space for FAB
-            _buildNavItem(Icons.calendar_month_outlined, 'Bookings', 3),
-            _buildNavItem(Icons.settings, 'Settings', 4),
-          ],
-        ),
+    shape: const CircularNotchedRectangle(),
+    notchMargin: 0,
+    elevation: 12,
+    shadowColor: Colors.black26,
+    color: const Color(0xFF7C3AED),
+    child: SizedBox(
+      height: 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(Icons.home_outlined, 'Home', 0),
+          _buildNavItem(Icons.celebration, 'Parties', 1),
+          const SizedBox(width: 52), // Space for FAB
+          _buildNavItem(Icons.calendar_month_outlined, 'Bookings', 3),
+          _buildNavItem(Icons.settings, 'Settings', 4),
+        ],
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
