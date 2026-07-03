@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bookings_app/model_class.dart';
+import 'package:bookings_app/models/model_class.dart';
 
 /// Holds all state that used to live inside [OrderListScreen]'s
 /// State object: the list of orders and the selected bottom-nav tab.

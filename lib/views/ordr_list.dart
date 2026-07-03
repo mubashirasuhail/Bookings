@@ -1,10 +1,10 @@
-import 'package:bookings_app/all_order.dart';
-import 'package:bookings_app/all_order2.dart';
-import 'package:bookings_app/fab.dart';
-import 'package:bookings_app/header.dart';
-import 'package:bookings_app/model_class.dart';
-import 'package:bookings_app/order_provider.dart';
-import 'package:bookings_app/search_bar.dart';
+
+import 'package:bookings_app/views/all_order2.dart';
+import 'package:bookings_app/views/widgets/fab.dart';
+import 'package:bookings_app/views/widgets/header.dart';
+import 'package:bookings_app/models/model_class.dart';
+import 'package:bookings_app/controllers/order_provider.dart';
+import 'package:bookings_app/views/widgets/search_bar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

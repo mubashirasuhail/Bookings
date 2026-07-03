@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bookings_app/color.dart';
+import 'package:bookings_app/views/theme/color.dart';
 
 // ---------------------------------------------------------------------------
 // Model

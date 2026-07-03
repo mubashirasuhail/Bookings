@@ -1,9 +1,9 @@
-import 'package:bookings_app/all_order_provider.dart';
-import 'package:bookings_app/color.dart';
-import 'package:bookings_app/fab.dart';
-import 'package:bookings_app/header.dart';
+import 'package:bookings_app/controllers/all_order_provider.dart';
+import 'package:bookings_app/views/theme/color.dart';
+import 'package:bookings_app/views/widgets/fab.dart';
+import 'package:bookings_app/views/widgets/header.dart';
 
-import 'package:bookings_app/search_bar.dart';
+import 'package:bookings_app/views/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
