@@ -1,4 +1,6 @@
+import 'package:bookings_app/fab.dart';
 import 'package:bookings_app/header.dart';
+import 'package:bookings_app/search_bar.dart';
 import 'package:flutter/material.dart';
 
 
@@ -128,7 +130,7 @@ final List<Order> kOrders = [
     addon: 'Candy Station',
     footer: 'Waiting Vendor Confirmation',
     footerBg: AppColors.chipBg,
-    footerFg: const Color(0xFF6B6B7B),
+    footerFg: const Color.fromARGB(255, 163, 163, 241),
   ),
   Order(
     id: 'GP-20192',
@@ -150,13 +152,13 @@ final List<Order> kOrders = [
     id: 'GP-20175',
     status: OrderStatus.declined,
       imagepath: 'assets/images/summit.jpg',
-    title: 'Birthday Bash Decor',
-    vendor: 'Sparkle Studio Dubai',
-    rating: 4.6,
-    total: 'AED 2,300',
-    orderDate: '15 Jun 2025',
-    eventDate: '22 Jun 2025',
-    guests: '40 people',
+    title: 'Grand Feast Catering',
+    vendor: 'Grand Feast Co.',
+    rating: 4.8,
+    total: 'AED 2,900',
+    orderDate: '10 Jun 2025',
+    eventDate: '18 Jun 2025',
+    guests: '45 people',
     addon: 'Balloon Arch',
     footer: 'Vendor Unavailable for This Date',
     footerBg: AppColors.redBg,
@@ -284,7 +286,7 @@ class _OrdersPageState extends State<AllOrdersPage> {
             Column(
               children: [
                Header(),
-                _buildSearch(),
+                OrderSearchBar(searchController: _searchController),
                 _buildTabs(),
                 Expanded(
                   child: orders.isEmpty
@@ -313,75 +315,18 @@ class _OrdersPageState extends State<AllOrdersPage> {
                 ),
               ],
             ),
-            Positioned(
+          /*  Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: _buildBottomNavBar(),
-            ),
+            ),*/
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'My Orders Detail',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: AppColors.ink,
-              letterSpacing: -0.3,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            '${kOrders.length} orders in total',
-            style: const TextStyle(fontSize: 13, color: AppColors.sub),
-          ),
-        ],
-      ),
-    );
-  }
-
-  
-  Widget _buildSearch() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 14),
-      child: Container(
-        height: 44,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F8),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE8E8EE), width: 1),
-        ),
-        child: TextField(
-          controller: _searchController,
-          style: const TextStyle(fontSize: 14, color: Color(0xFF1A1A2E)),
-          decoration: InputDecoration(
-            hintText: 'Search package, vendor or Order ID..',
-            hintStyle: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[400],
-              fontWeight: FontWeight.w400,
-            ),
-            prefixIcon: Icon(
-              Icons.search_rounded,
-              color: Colors.grey[400],
-              size: 20,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        ),
-      ),
+      bottomNavigationBar: _buildBottomNavBar(),
+      floatingActionButton: Fab(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
