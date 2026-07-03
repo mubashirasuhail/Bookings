@@ -5,7 +5,7 @@ import 'package:bookings_app/color.dart';
 // Model
 // ---------------------------------------------------------------------------
 
-enum OrderStatus { pending, awaiting, confirmed, declined }
+enum OrderStatus { pending, awaiting, confirmed, delivered, cancelled }
 
 class OrderStatusInfo {
   final String label;
@@ -13,6 +13,8 @@ class OrderStatusInfo {
   final Color badgeFg;
   final Color cardAccent;
   final IconData icon;
+  final bool showAccentBorder;
+  final bool showBadgeBackground;
 
   const OrderStatusInfo({
     required this.label,
@@ -20,6 +22,8 @@ class OrderStatusInfo {
     required this.badgeFg,
     required this.cardAccent,
     required this.icon,
+    this.showAccentBorder = true,
+    this.showBadgeBackground = true,
   });
 }
 
@@ -34,9 +38,9 @@ const Map<OrderStatus, OrderStatusInfo> kStatusInfo = {
   OrderStatus.awaiting: OrderStatusInfo(
     label: 'Awaiting Payment',
     badgeBg: AppColors.awaitingBg,
-    badgeFg: AppColors.purpleDark,
-    cardAccent: AppColors.purple,
-    icon: Icons.account_balance_wallet_outlined,
+    badgeFg: Color.fromARGB(255, 40, 137, 217),
+    cardAccent: Color.fromARGB(255, 92, 110, 246),
+    icon: Icons.credit_card_rounded,
   ),
   OrderStatus.confirmed: OrderStatusInfo(
     label: 'Confirmed',
@@ -45,12 +49,21 @@ const Map<OrderStatus, OrderStatusInfo> kStatusInfo = {
     cardAccent: AppColors.green,
     icon: Icons.check_circle_outline_rounded,
   ),
-  OrderStatus.declined: OrderStatusInfo(
-    label: 'Declined',
+  OrderStatus.delivered: OrderStatusInfo(
+    label: 'Delivered',
+    badgeBg: Colors.transparent,
+    badgeFg: AppColors.purpleDark,
+    cardAccent: Colors.transparent,
+    icon: Icons.local_shipping_rounded,
+    showAccentBorder: false,
+    showBadgeBackground: false,
+  ),
+  OrderStatus.cancelled: OrderStatusInfo(
+    label: 'Cancelled',
     badgeBg: AppColors.redBg,
     badgeFg: AppColors.red,
     cardAccent: AppColors.red,
-    icon: Icons.cancel_outlined,
+    icon: Icons.cancel_rounded,
   ),
 };
 
@@ -65,10 +78,7 @@ class Order1 {
   final String orderDate;
   final String eventDate;
   final String guests;
-  final String addon;
-  final String footer;
-  final Color footerBg;
-  final Color footerFg;
+  final String? addon;
 
   const Order1({
     required this.id,
@@ -81,10 +91,7 @@ class Order1 {
     required this.orderDate,
     required this.eventDate,
     required this.guests,
-    required this.addon,
-    required this.footer,
-    required this.footerBg,
-    required this.footerFg,
+    this.addon,
   });
 }
 
@@ -99,7 +106,8 @@ const List<OrderTab> kTabs = [
   OrderTab('All', null),
   OrderTab('Pending', OrderStatus.pending),
   OrderTab('Awaiting Payment', OrderStatus.awaiting),
-  OrderTab('Declined', OrderStatus.declined),
+  OrderTab('Delivered', OrderStatus.delivered),
+  OrderTab('Cancelled', OrderStatus.cancelled),
 ];
 
 // ---------------------------------------------------------------------------
@@ -109,6 +117,8 @@ const List<OrderTab> kTabs = [
 class OrderProvider2 extends ChangeNotifier {
   OrderProvider2() {
     _orders = _mockOrders;
+    // DJ Night Experience starts collapsed, matching the reference design.
+    _collapsed.add('GP-20074');
   }
 
   late final List<Order1> _orders;
@@ -124,7 +134,7 @@ class OrderProvider2 extends ChangeNotifier {
   }
 
   // -- tabs --
-  int _activeTab = 1; // starts on "Pending"
+  int _activeTab = 0;
   int get activeTab => _activeTab;
 
   void selectTab(int index) {
@@ -154,6 +164,19 @@ class OrderProvider2 extends ChangeNotifier {
       _collapsed.add(orderId);
     }
     notifyListeners();
+  }
+
+  // -- actions --
+  void payNow(String orderId) {
+    // TODO: hook up to payment flow
+  }
+
+  void rebook(String orderId) {
+    // TODO: hook up to rebooking flow
+  }
+
+  void leaveReview(String orderId) {
+    // TODO: hook up to review flow
   }
 
   // -- derived data --
@@ -189,29 +212,47 @@ class OrderProvider2 extends ChangeNotifier {
       eventDate: '5 Jul 2025',
       guests: '80 people',
       addon: 'Candy Station',
-      footer: 'Waiting Vendor Confirmation',
-      footerBg: AppColors.chipBg,
-      footerFg: const Color.fromARGB(255, 163, 163, 241),
     ),
     Order1(
-      id: 'GP-20192',
+      id: 'GP-20365',
       status: OrderStatus.awaiting,
       imagepath: 'assets/images/royal.jpg',
       title: 'Royal Wedding Hall Package',
       vendor: 'Bloom & Petal Events',
-      rating: 4.9,
+      rating: 4.8,
       total: 'AED 6,500',
-      orderDate: '8 July 2025',
+      orderDate: '8 Jul 2025',
       eventDate: '22 Aug 2025',
       guests: '120 people',
       addon: 'Photo Booth',
-      footer: 'Complete Payment to Confirm',
-      footerBg: AppColors.awaitingBg,
-      footerFg: AppColors.purpleDark,
     ),
     Order1(
-      id: 'GP-20175',
-      status: OrderStatus.declined,
+      id: 'GP-20290',
+      status: OrderStatus.delivered,
+      imagepath: 'assets/images/summit.jpg',
+      title: 'Kids Fun Zone Package',
+      vendor: 'WonderKids UAE',
+      rating: 4.7,
+      total: 'AED 1,550',
+      orderDate: '2 Jul 2025',
+      eventDate: '10 Jul 2025',
+      guests: '25 people',
+    ),
+    Order1(
+      id: 'GP-20074',
+      status: OrderStatus.delivered,
+      imagepath: 'assets/images/summit.jpg',
+      title: 'DJ Night Experience',
+      vendor: 'EliteSoundDJ',
+      rating: 4.9,
+      total: 'AED 2,150',
+      orderDate: '19 Jun 2025',
+      eventDate: '25 Jun 2025',
+      guests: '—',
+    ),
+    Order1(
+      id: 'GP-19941',
+      status: OrderStatus.cancelled,
       imagepath: 'assets/images/summit.jpg',
       title: 'Grand Feast Catering',
       vendor: 'Grand Feast Co.',
@@ -220,58 +261,7 @@ class OrderProvider2 extends ChangeNotifier {
       orderDate: '10 Jun 2025',
       eventDate: '18 Jun 2025',
       guests: '45 people',
-      addon: 'Balloon Arch',
-      footer: 'Vendor Unavailable for This Date',
-      footerBg: AppColors.redBg,
-      footerFg: AppColors.red,
     ),
-    Order1(
-      id: 'GP-20201',
-      status: OrderStatus.confirmed,
-      imagepath: 'assets/images/summit.jpg',
-      title: 'Product Launch Experience',
-      vendor: 'Skyline Productions',
-      rating: 4.9,
-      total: 'AED 8,900',
-      orderDate: '25 Jun 2025',
-      eventDate: '10 Jul 2025',
-      guests: '200 people',
-      addon: 'LED Wall',
-      footer: 'Vendor Confirmed - All Set',
-      footerBg: AppColors.greenBg,
-      footerFg: AppColors.green,
-    ),
-    Order1(
-      id: 'GP-20166',
-      status: OrderStatus.confirmed,
-      imagepath: 'assets/images/summit.jpg',
-      title: 'Live Music Night Package',
-      vendor: 'Downtown Rooftop Co.',
-      rating: 4.7,
-      total: 'AED 6,750',
-      orderDate: '12 Jun 2025',
-      eventDate: '29 Jun 2025',
-      guests: '120 people',
-      addon: 'DJ Booth',
-      footer: 'Vendor Confirmed - All Set',
-      footerBg: AppColors.greenBg,
-      footerFg: AppColors.green,
-    ),
-    Order1(
-      id: 'GP-20140',
-      status: OrderStatus.confirmed,
-      imagepath: 'assets/images/summit.jpg',
-      title: 'Garden Engagement Party',
-      vendor: 'Green Terrace Events',
-      rating: 4.8,
-      total: 'AED 5,400',
-      orderDate: '2 Jun 2025',
-      eventDate: '14 Jun 2025',
-      guests: '60 people',
-      addon: 'Floral Arch',
-      footer: 'Vendor Confirmed - All Set',
-      footerBg: AppColors.greenBg,
-      footerFg: AppColors.green,
-    ),
+   
   ];
 }

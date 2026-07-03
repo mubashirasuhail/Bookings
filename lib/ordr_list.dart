@@ -1,4 +1,5 @@
 import 'package:bookings_app/all_order.dart';
+import 'package:bookings_app/all_order2.dart';
 import 'package:bookings_app/fab.dart';
 import 'package:bookings_app/header.dart';
 import 'package:bookings_app/model_class.dart';
@@ -89,7 +90,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AllOrdersPage()),
+                          builder: (context) => const AllOrdersPage2()),
                     );
                   },
                   child: const Padding(

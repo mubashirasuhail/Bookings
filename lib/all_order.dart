@@ -1,4 +1,4 @@
-import 'package:bookings_app/color.dart';
+/*import 'package:bookings_app/color.dart';
 import 'package:bookings_app/fab.dart';
 import 'package:bookings_app/header.dart';
 import 'package:bookings_app/all_order_provider.dart';
@@ -544,4 +544,4 @@ class _DetailRow extends StatelessWidget {
       ),
     );
   }
-}
+}*/
