@@ -1,336 +1,74 @@
+import 'package:bookings_app/color.dart';
 import 'package:bookings_app/fab.dart';
 import 'package:bookings_app/header.dart';
+import 'package:bookings_app/all_order_provider.dart';
 import 'package:bookings_app/search_bar.dart';
 import 'package:flutter/material.dart';
-
-
-// ---------------------------------------------------------------------------
-// Design tokens
-// ---------------------------------------------------------------------------
-
-class AppColors {
-  static const purple = Color(0xFF8B5CF6);
-  static const purpleDark = Color(0xFF6D28D9);
-  static const purpleDeep = Color(0xFF5B21B6);
-  static const pink = Color(0xFFC026D3);
-  static const orange = Color(0xFFF97316);
-  static const orangeBg = Color(0xFFFEF1E6);
-  static const green = Color(0xFF16A34A);
-  static const greenBg = Color(0xFFE9F8EE);
-  static const red = Color(0xFFD1483F);
-  static const redBg = Color(0xFFFCEAE8);
-  static const awaitingBg = Color(0xFFF3EBFF);
-  static const ink = Color(0xFF1A1A2E);
-  static const sub = Color(0xFF8B8B9C);
-  static const line = Color(0xFFEFEFF4);
-  static const cardBg = Colors.white;
-  static const pageBg = Color(0xFFF7F7FA);
-  static const chipBg = Color(0xFFEFEFF4);
-}
-
-// ---------------------------------------------------------------------------
-// Model
-// ---------------------------------------------------------------------------
-
-enum OrderStatus { pending, awaiting, confirmed, declined }
-
-class OrderStatusInfo {
-  final String label;
-  final Color badgeBg;
-  final Color badgeFg;
-  final Color cardAccent;
-  final IconData icon;
-
-  const OrderStatusInfo({
-    required this.label,
-    required this.badgeBg,
-    required this.badgeFg,
-    required this.cardAccent,
-    required this.icon,
-  });
-}
-
-const Map<OrderStatus, OrderStatusInfo> kStatusInfo = {
-  OrderStatus.pending: OrderStatusInfo(
-    label: 'Pending',
-    badgeBg: AppColors.orangeBg,
-    badgeFg: AppColors.orange,
-    cardAccent: AppColors.orange,
-    icon: Icons.access_time_rounded,
-  ),
-  OrderStatus.awaiting: OrderStatusInfo(
-    label: 'Awaiting Payment',
-    badgeBg: AppColors.awaitingBg,
-    badgeFg: AppColors.purpleDark,
-    cardAccent: AppColors.purple,
-    icon: Icons.account_balance_wallet_outlined,
-  ),
-  OrderStatus.confirmed: OrderStatusInfo(
-    label: 'Confirmed',
-    badgeBg: AppColors.greenBg,
-    badgeFg: AppColors.green,
-    cardAccent: AppColors.green,
-    icon: Icons.check_circle_outline_rounded,
-  ),
-  OrderStatus.declined: OrderStatusInfo(
-    label: 'Declined',
-    badgeBg: AppColors.redBg,
-    badgeFg: AppColors.red,
-    cardAccent: AppColors.red,
-    icon: Icons.cancel_outlined,
-  ),
-};
-
-class Order {
-  final String id;
-  final OrderStatus status;
-  final String imagepath;
-  final String title;
-  final String vendor;
-  final double rating;
-  final String total;
-  final String orderDate;
-  final String eventDate;
-  final String guests;
-  final String addon;
-  final String footer;
-  final Color footerBg;
-  final Color footerFg;
-
-  const Order({
-    required this.id,
-    required this.status,
-    required this.imagepath,
-    required this.title,
-    required this.vendor,
-    required this.rating,
-    required this.total,
-    required this.orderDate,
-    required this.eventDate,
-    required this.guests,
-    required this.addon,
-    required this.footer,
-    required this.footerBg,
-    required this.footerFg,
-  });
-}
-
-final List<Order> kOrders = [
-  Order(
-    id: 'GP-20188',
-    status: OrderStatus.pending,
-    imagepath: 'assets/images/summit.jpg',
-    title: 'Corporate Summit Package',
-    vendor: 'EliteVenues Dubai',
-    rating: 4.9,
-    total: 'AED 4,200',
-    orderDate: '28 Jun 2025',
-    eventDate: '5 Jul 2025',
-    guests: '80 people',
-    addon: 'Candy Station',
-    footer: 'Waiting Vendor Confirmation',
-    footerBg: AppColors.chipBg,
-    footerFg: const Color.fromARGB(255, 163, 163, 241),
-  ),
-  Order(
-    id: 'GP-20192',
-    status: OrderStatus.awaiting,
-      imagepath: 'assets/images/royal.jpg',
-    title: 'Royal Wedding Hall Package',
-    vendor: 'Bloom & Petal Events',
-    rating: 4.9,
-    total: 'AED 6,500',
-    orderDate: '8 July 2025',
-    eventDate: '22 Aug 2025',
-    guests: '120 people',
-    addon: 'Photo Booth',
-    footer: 'Complete Payment to Confirm',
-    footerBg: AppColors.awaitingBg,
-    footerFg: AppColors.purpleDark,
-  ),
-  Order(
-    id: 'GP-20175',
-    status: OrderStatus.declined,
-      imagepath: 'assets/images/summit.jpg',
-    title: 'Grand Feast Catering',
-    vendor: 'Grand Feast Co.',
-    rating: 4.8,
-    total: 'AED 2,900',
-    orderDate: '10 Jun 2025',
-    eventDate: '18 Jun 2025',
-    guests: '45 people',
-    addon: 'Balloon Arch',
-    footer: 'Vendor Unavailable for This Date',
-    footerBg: AppColors.redBg,
-    footerFg: AppColors.red,
-  ),
-  Order(
-    id: 'GP-20201',
-    status: OrderStatus.confirmed,
-       imagepath: 'assets/images/summit.jpg',
-    title: 'Product Launch Experience',
-    vendor: 'Skyline Productions',
-    rating: 4.9,
-    total: 'AED 8,900',
-    orderDate: '25 Jun 2025',
-    eventDate: '10 Jul 2025',
-    guests: '200 people',
-    addon: 'LED Wall',
-    footer: 'Vendor Confirmed - All Set',
-    footerBg: AppColors.greenBg,
-    footerFg: AppColors.green,
-  ),
-  Order(
-    id: 'GP-20166',
-    status: OrderStatus.confirmed,
-      imagepath: 'assets/images/summit.jpg',
-    title: 'Live Music Night Package',
-    vendor: 'Downtown Rooftop Co.',
-    rating: 4.7,
-    total: 'AED 6,750',
-    orderDate: '12 Jun 2025',
-    eventDate: '29 Jun 2025',
-    guests: '120 people',
-    addon: 'DJ Booth',
-    footer: 'Vendor Confirmed - All Set',
-    footerBg: AppColors.greenBg,
-    footerFg: AppColors.green,
-  ),
- 
-  Order(
-    id: 'GP-20140',
-    status: OrderStatus.confirmed,
-    imagepath: 'assets/images/summit.jpg',
-    title: 'Garden Engagement Party',
-    vendor: 'Green Terrace Events',
-    rating: 4.8,
-    total: 'AED 5,400',
-    orderDate: '2 Jun 2025',
-    eventDate: '14 Jun 2025',
-    guests: '60 people',
-    addon: 'Floral Arch',
-    footer: 'Vendor Confirmed - All Set',
-    footerBg: AppColors.greenBg,
-    footerFg: AppColors.green,
-  ),
-];
-
-// ---------------------------------------------------------------------------
-// Tabs
-// ---------------------------------------------------------------------------
-
-class OrderTab {
-  final String label;
-  final OrderStatus? status; // null = "All"
-
-  const OrderTab(this.label, this.status);
-}
-
-const List<OrderTab> kTabs = [
-  OrderTab('All', null),
-  OrderTab('Pending', OrderStatus.pending),
-  OrderTab('Awaiting Payment', OrderStatus.awaiting),
-  OrderTab('Declined', OrderStatus.declined),
-];
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
+import 'package:provider/provider.dart';
 
 class AllOrdersPage extends StatefulWidget {
   const AllOrdersPage({super.key});
 
   @override
-  State<AllOrdersPage> createState() => _OrdersPageState();
+  State<AllOrdersPage> createState() => _AllOrdersPageState();
 }
 
-class _OrdersPageState extends State<AllOrdersPage> {
-    int _selectedBottomIndex = 3;
-  int _activeTab = 1; // starts on "Pending", matching the reference screen
-  final Set<String> _collapsed = {};
+class _AllOrdersPageState extends State<AllOrdersPage> {
   final TextEditingController _searchController = TextEditingController();
-  String _query = '';
 
-  int _countFor(OrderStatus? status) {
-    if (status == null) return kOrders.length;
-    return kOrders.where((o) => o.status == status).length;
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
   }
 
-  List<Order> get _filteredOrders {
-    final status = kTabs[_activeTab].status;
-    return kOrders.where((o) {
-      final matchesTab = status == null || o.status == status;
-      final matchesQuery = _query.isEmpty ||
-          o.title.toLowerCase().contains(_query) ||
-          o.vendor.toLowerCase().contains(_query) ||
-          o.id.toLowerCase().contains(_query);
-      return matchesTab && matchesQuery;
-    }).toList();
+  void _onSearchChanged() {
+    context.read<OrderProvider2>().updateQuery(_searchController.text);
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final orders = _filteredOrders;
-
     return Scaffold(
       backgroundColor: AppColors.pageBg,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-               Header(),
-                OrderSearchBar(searchController: _searchController),
-                _buildTabs(),
-                Expanded(
-                  child: orders.isEmpty
-                      ? _buildEmptyState()
-                      : ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                          itemCount: orders.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 14),
-                          itemBuilder: (context, index) =>
-                              _OrderCard(
-                            order: orders[index],
-                            expanded: !_collapsed.contains(orders[index].id),
-                            onToggle: () {
-                              setState(() {
-                                final id = orders[index].id;
-                                if (_collapsed.contains(id)) {
-                                  _collapsed.remove(id);
-                                } else {
-                                  _collapsed.add(id);
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                ),
-              ],
-            ),
-          /*  Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _buildBottomNavBar(),
-            ),*/
+            const Header(),
+            OrderSearchBar(searchController: _searchController),
+            const _TabsBar(),
+            const Expanded(child: _OrdersList()),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
-      floatingActionButton: Fab(),
+      bottomNavigationBar: const _BottomBar(),
+      floatingActionButton: Fab(
+       // onTap: () {
+          // e.g. Navigator.push to an "Add Order" flow
+     // },
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
+}
 
-  Widget _buildTabs() {
+// ---------------------------------------------------------------------------
+// Tabs
+// ---------------------------------------------------------------------------
+
+class _TabsBar extends StatelessWidget {
+  const _TabsBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<OrderProvider2>();
+
     return SizedBox(
       height: 44,
       child: ListView.separated(
@@ -340,9 +78,9 @@ class _OrdersPageState extends State<AllOrdersPage> {
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final tab = kTabs[index];
-          final active = index == _activeTab;
+          final active = index == provider.activeTab;
           return GestureDetector(
-            onTap: () => setState(() => _activeTab = index),
+            onTap: () => context.read<OrderProvider2>().selectTab(index),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
               decoration: BoxDecoration(
@@ -365,7 +103,8 @@ class _OrdersPageState extends State<AllOrdersPage> {
                   ),
                   const SizedBox(width: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                     decoration: BoxDecoration(
                       color: active
                           ? Colors.white.withOpacity(0.25)
@@ -373,7 +112,7 @@ class _OrdersPageState extends State<AllOrdersPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      '${_countFor(tab.status)}',
+                      '${provider.countFor(tab.status)}',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -389,79 +128,110 @@ class _OrdersPageState extends State<AllOrdersPage> {
       ),
     );
   }
+}
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.folder_open_rounded, size: 40, color: AppColors.sub),
-          SizedBox(height: 10),
-          Text(
-            'No orders in this category yet.',
-            style: TextStyle(fontSize: 13, color: AppColors.sub),
-          ),
-        ],
+// ---------------------------------------------------------------------------
+// List + empty state
+// ---------------------------------------------------------------------------
+
+class _OrdersList extends StatelessWidget {
+  const _OrdersList();
+
+  @override
+  Widget build(BuildContext context) {
+    final orders = context.watch<OrderProvider2>().filteredOrders;
+
+    if (orders.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.folder_open_rounded, size: 40, color: AppColors.sub),
+            SizedBox(height: 10),
+            Text(
+              'No orders in this category yet.',
+              style: TextStyle(fontSize: 13, color: AppColors.sub),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+      itemCount: orders.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 14),
+      itemBuilder: (context, index) => _OrderCard(order: orders[index]),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bottom nav
+// ---------------------------------------------------------------------------
+
+class _BottomBar extends StatelessWidget {
+  const _BottomBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<OrderProvider2>();
+
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 0,
+      elevation: 12,
+      shadowColor: Colors.black26,
+      color: const Color(0xFF7C3AED),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _NavItem(icon: Icons.home_outlined, label: 'Home', index: 0, provider: provider),
+            _NavItem(icon: Icons.celebration, label: 'Parties', index: 1, provider: provider),
+            const SizedBox(width: 52),
+            _NavItem(icon: Icons.calendar_month_outlined, label: 'Bookings', index: 3, provider: provider),
+            _NavItem(icon: Icons.settings, label: 'Settings', index: 4, provider: provider),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildBottomNavBar() {
-    return Bottombar();
-  }
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int index;
+  final OrderProvider2 provider;
 
-  BottomAppBar Bottombar() {
-    return BottomAppBar(
-    shape: const CircularNotchedRectangle(),
-    notchMargin: 0,
-    elevation: 12,
-    shadowColor: Colors.black26,
-    color: const Color(0xFF7C3AED),
-    child: SizedBox(
-      height: 60,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_outlined, 'Home', 0),
-          _buildNavItem(Icons.celebration, 'Parties', 1),
-          const SizedBox(width: 52), // Space for FAB
-          _buildNavItem(Icons.calendar_month_outlined, 'Bookings', 3),
-          _buildNavItem(Icons.settings, 'Settings', 4),
-        ],
-      ),
-    ),
-  );
-  }
-    Widget _buildNavItem(IconData icon, String label, int index) {
-    final bool isSelected = _selectedBottomIndex == index;
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.index,
+    required this.provider,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = provider.selectedBottomIndex == index;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedBottomIndex = index;
-        });
-      },
+      onTap: () => context.read<OrderProvider2>().selectBottomIndex(index),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 60,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isSelected
-                  ? const Color.fromARGB(255, 252, 252, 252)
-                  : const Color(0xFFAAAAAA),
-            ),
+            Icon(icon, size: 22, color: isSelected ? Colors.white : const Color(0xFFAAAAAA)),
             const SizedBox(height: 3),
             Text(
               label,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected
-                    ? const Color.fromARGB(255, 255, 255, 255)
-                    : const Color(0xFFAAAAAA),
+                color: isSelected ? Colors.white : const Color(0xFFAAAAAA),
               ),
             ),
           ],
@@ -469,7 +239,6 @@ class _OrdersPageState extends State<AllOrdersPage> {
       ),
     );
   }
-
 }
 
 // ---------------------------------------------------------------------------
@@ -477,19 +246,16 @@ class _OrdersPageState extends State<AllOrdersPage> {
 // ---------------------------------------------------------------------------
 
 class _OrderCard extends StatelessWidget {
-  final Order order;
-  final bool expanded;
-  final VoidCallback onToggle;
+  final Order1 order;
 
-  const _OrderCard({
-    required this.order,
-    required this.expanded,
-    required this.onToggle,
-  });
+  const _OrderCard({required this.order});
 
   @override
   Widget build(BuildContext context) {
     final info = kStatusInfo[order.status]!;
+    final expanded = context.select<OrderProvider2, bool>(
+      (p) => p.isExpanded(order.id),
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -519,11 +285,11 @@ class _OrderCard extends StatelessWidget {
                   ),
                 ),
                 child: Image.asset(
-    order. imagepath,
-    width: 80,
-    height: 80,
-    fit: BoxFit.cover,
-  ),
+                  order.imagepath,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -599,7 +365,7 @@ class _OrderCard extends StatelessWidget {
             ],
           ),
           GestureDetector(
-            onTap: onToggle,
+            onTap: () => context.read<OrderProvider2>().toggleExpanded(order.id),
             child: Padding(
               padding: const EdgeInsets.only(top: 12),
               child: Row(

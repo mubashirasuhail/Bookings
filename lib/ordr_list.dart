@@ -1,11 +1,12 @@
-
 import 'package:bookings_app/all_order.dart';
 import 'package:bookings_app/fab.dart';
 import 'package:bookings_app/header.dart';
 import 'package:bookings_app/model_class.dart';
+import 'package:bookings_app/order_provider.dart';
 import 'package:bookings_app/search_bar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
@@ -14,54 +15,16 @@ class OrderListScreen extends StatefulWidget {
 }
 
 class _OrderListScreenState extends State<OrderListScreen> {
-  int _selectedBottomIndex = 3;
+  // Only the controller stays here — it needs a State object for disposal.
+  // Order data and the selected bottom-nav tab now live in OrderProvider.
   final TextEditingController _searchController = TextEditingController();
-  final List<OrderModel> orders = const [
-    OrderModel(
-      orderId: 'PartPop UAE',
-      price: 850,
-      status: 'Pending',
-      statusColor: Color(0xFFEA8C00),
-      statusBgColor: Color(0xFFFFF3DC),
-      statusIcon: Icons.access_time_rounded,
-      imagePath: 'assets/images/bday.jpg',
-      title: 'Gold Birthday Bash Package',
-      categories: ['Decor', 'Catering', 'Photography'],
-    ),
-    OrderModel(
-      orderId: 'PartPop UAE',
-      price: 850,
-      status: 'Confirmed',
-      statusColor: Color(0xFF16A34A),
-      statusBgColor: Color(0xFFDCFCE7),
-      statusIcon: Icons.check_circle_rounded,
-      imagePath: 'assets/images/bday.jpg',
-      title: 'Gold Birthday Bash Package',
-      categories: ['Decor', 'Catering', 'Photography'],
-    ),
-    OrderModel(
-      orderId: 'PartPop UAE',
-      price: 850,
-      status: 'Awaiting Payment',
-      statusColor: Color(0xFF2563EB),
-      statusBgColor: Color(0xFFDBEAFE),
-      statusIcon: Icons.payments_rounded,
-      imagePath: 'assets/images/bday.jpg',
-      title: 'Gold Birthday Bash Package',
-      categories: ['Decor', 'Catering', 'Photography'],
-    ),
-    OrderModel(
-      orderId: 'PartPop UAE',
-      price: 850,
-      status: 'Delivered',
-      statusColor: Color(0xFF6B7280),
-      statusBgColor: Color(0xFFF3F4F6),
-      statusIcon: Icons.local_shipping_rounded,
-      imagePath: 'assets/images/bday.jpg',
-      title: 'Gold Birthday Bash Package',
-      categories: ['Decor', 'Catering', 'Photography'],
-    ),
-  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,8 +34,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
           children: [
             Header(),
             OrderSearchBar(searchController: _searchController),
-            _buildTabSection(),
-            Expanded(child: _buildOrderList()),
+            _buildTabSection(context),
+            Expanded(child: _buildOrderList(context)),
           ],
         ),
       ),
@@ -82,30 +45,31 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  Widget _buildTabSection() {
+  Widget _buildTabSection(BuildContext context) {
+    // orderCount is read once here; use context.watch so the label
+    // updates automatically if the provider's order list ever changes.
+    final orderCount = context.watch<OrderProvider>().orderCount;
+
     return Container(
-    //  color: const Color.fromARGB(255, 221, 221, 221),
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-             // color: const Color(0xFF7C3AED),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                const Text(
-                  'All Packages(4)',
-                  style: TextStyle(
-                    color: const Color(0xFF7C3AED),
+                Text(
+                  'All Packages($orderCount)',
+                  style: const TextStyle(
+                    color: Color(0xFF7C3AED),
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),
                 ),
                 const SizedBox(width: 6),
-               
               ],
             ),
           ),
@@ -119,31 +83,33 @@ class _OrderListScreenState extends State<OrderListScreen> {
             ),
             child: Row(
               children: [
-            InkWell(
-  borderRadius: BorderRadius.circular(4), // Keeps the ripple effect clean and contained
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AllOrdersPage()), // Replace with your target page
-    );
-  },
-  child: const Padding(
-    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2), // Makes the clickable hit-target slightly larger
-    child: Text(
-      'View all',
-      style: TextStyle(
-        color: Color(0xFF7C3AED),
-        fontWeight: FontWeight.w600,
-        fontSize: 13,
-      ),
-    ),
-  ),
-),
+                InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AllOrdersPage()),
+                    );
+                  },
+                  child: const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Text(
+                      'View all',
+                      style: TextStyle(
+                        color: Color(0xFF7C3AED),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 2),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 12,
-                  color: const Color(0xFF7C3AED),
+                  color: Color(0xFF7C3AED),
                 ),
               ],
             ),
@@ -153,7 +119,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  Widget _buildOrderList() {
+  Widget _buildOrderList(BuildContext context) {
+    final orders = context.watch<OrderProvider>().orders;
+
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       itemCount: orders.length,
@@ -180,10 +148,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
-         crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Image - actual asset image, with a graceful fallback
-            // if the asset can't be found so the UI never breaks.
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: SizedBox(
@@ -197,7 +163,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
+                          end: Alignment.bottomCenter,
                           colors: [
                             Color(0xFFFFC0CB),
                             Color(0xFFFFB6C1),
@@ -214,15 +180,11 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 ),
               ),
             ),
-
             const SizedBox(width: 12),
-
-            // Order Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status Badge
                   Row(
                     children: [
                       Container(
@@ -254,10 +216,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 4),
-
-                  // Category Tags (e.g. "Decor" + "+2")
                   if (order.categories.isNotEmpty)
                     Row(
                       children: [
@@ -298,10 +257,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                         ],
                       ],
                     ),
-
                   const SizedBox(height: 5),
-
-                  // Title
                   Text(
                     order.title,
                     style: const TextStyle(
@@ -313,10 +269,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-
                   const SizedBox(height: 3),
-
-                  // Order ID
                   Text(
                     order.orderId,
                     style: TextStyle(
@@ -325,10 +278,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-
                   const SizedBox(height: 5),
-
-                  // Price + Button Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -376,34 +326,37 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
   BottomAppBar Bottombar() {
     return BottomAppBar(
-    shape: const CircularNotchedRectangle(),
-    notchMargin: 0,
-    elevation: 12,
-    shadowColor: Colors.black26,
-    color: const Color(0xFF7C3AED),
-    child: SizedBox(
-      height: 60,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home_outlined, 'Home', 0),
-          _buildNavItem(Icons.celebration, 'Parties', 1),
-          const SizedBox(width: 52), // Space for FAB
-          _buildNavItem(Icons.calendar_month_outlined, 'Bookings', 3),
-          _buildNavItem(Icons.settings, 'Settings', 4),
-        ],
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 0,
+      elevation: 12,
+      shadowColor: Colors.black26,
+      color: const Color(0xFF7C3AED),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Icons.home_outlined, 'Home', 0),
+            _buildNavItem(Icons.celebration, 'Parties', 1),
+            const SizedBox(width: 52), // Space for FAB
+            _buildNavItem(Icons.calendar_month_outlined, 'Bookings', 3),
+            _buildNavItem(Icons.settings, 'Settings', 4),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
-    final bool isSelected = _selectedBottomIndex == index;
+    // context.watch here re-runs the bottom bar (5 tiny widgets) on every
+    // tab change — cheap enough to keep this simple rather than splitting
+    // it into its own Consumer widget.
+    final isSelected =
+        context.watch<OrderProvider>().selectedBottomIndex == index;
+
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedBottomIndex = index;
-        });
+        context.read<OrderProvider>().selectBottomIndex(index);
       },
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
@@ -435,4 +388,3 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 }
-

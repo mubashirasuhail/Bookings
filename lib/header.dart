@@ -1,13 +1,15 @@
 
+import 'package:bookings_app/order_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Header extends StatelessWidget {
-  const Header({
-    super.key,
-  });
+  const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final orderCount = context.watch<OrderProvider>().orderCount;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
       color: Colors.white,
@@ -29,7 +31,7 @@ class Header extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '7 orders in total',
+                '$orderCount ${orderCount == 1 ? 'order' : 'orders'} in total',
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[500],
